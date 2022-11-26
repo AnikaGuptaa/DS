@@ -1,0 +1,79 @@
+#include<stdio.h>
+#include<malloc.h>
+
+struct stack{
+    int a[10];
+    int top;
+};
+
+void creat(struct stack *s){
+    s->top = -1;
+}
+
+void push(struct stack *s, int value){
+        s->top++;
+        s->a[s->top] = value;
+}
+
+void pop(struct stack *s){
+    s->top--;
+}
+
+void swap(int a,int b){
+
+}
+
+void sort(struct stack *s){
+    int t;
+    struct stack *temp;
+    temp = (struct stack *)malloc(sizeof(struct stack));
+    creat(temp);
+    push(temp,s->a[s->top]);
+    pop(s);
+    while(s->top > -1){
+        if(s->a[s->top] >= temp->a[temp->top]){
+            push(temp,s->a[s->top]);
+            pop(s);
+        }else{
+            t = s->a[s->top];
+            pop(s);
+            push(s,temp->a[temp->top]);
+            pop(temp);
+            push(temp,t);
+            while(temp->top > 0 && temp->a[temp->top] < temp->a[temp->top-1]){
+                t = temp->a[temp->top];
+                pop(temp);
+                push(s,temp->a[temp->top]);
+                pop(temp);
+                push(temp,t);
+            }
+            while(temp->top > 0){
+                push(s,temp->a[temp->top]);
+                pop(temp);
+            }
+        }
+    }
+    while(temp->top > -1){
+        push(s,temp->a[temp->top]);
+        pop(temp);
+    }
+    while(s->top > -1){
+        printf("%d ",s->a[s->top]);
+        pop(s);
+    }
+}
+
+void main(){
+    int i,value,n;
+    struct stack *s;
+    s = (struct stack *)malloc(sizeof(struct stack));
+    creat(s);
+    printf("Enter the number of elements you want - ");
+    scanf("%d",&n);
+    printf("Enter the elements - ");
+    for(i=0;i<n;i++){
+        scanf("%d",&value);
+        push(s,value);
+    }
+    sort(s);
+}
