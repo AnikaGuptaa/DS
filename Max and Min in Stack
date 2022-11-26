@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<malloc.h>
+
+struct stack{
+    int a[10];
+    int top;
+};
+
+void creat(struct stack *s){
+    s->top = -1;
+}
+
+void push(struct stack *s, int n, int value){
+    if(s->top == n){
+        printf("Overflow");
+    }else{
+        s->top++;
+        s->a[s->top] = value;
+    }
+}
+
+void pop(struct stack *s){
+    s->top--;
+}
+
+void max(struct stack *s){
+    int p;
+    p = s->a[s->top];
+    pop(s);
+    while(s->top > -1){
+        if(s->a[s->top] > p){
+          p = s->a[s->top];
+          pop(s);
+        }else{
+          pop(s);
+        }
+    }
+    printf("Max - %d",p);
+}
+
+void min(struct stack *s, int n){
+    int p;
+    s->top = n;
+    p = s->a[s->top];
+    pop(s);
+    while(s->top > -1){
+        if(s->a[s->top] < p){
+          p = s->a[s->top];
+          pop(s);
+        }else{
+          pop(s);
+        }
+    }
+    printf("Min - %d",p);
+}
+
+void main(){
+    int i,value,n;
+    struct stack *s;
+    s = (struct stack *)malloc(sizeof(struct stack));
+    creat(s);
+    printf("Enter the number of elements you want - ");
+    scanf("%d",&n);
+    printf("Enter the elements - ");
+    for(i=0;i<n;i++){
+        scanf("%d",&value);
+        push(s,n,value);
+    }
+    max(s);
+    printf("\n");
+    min(s,n-1);
+}
