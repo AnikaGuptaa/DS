@@ -1,0 +1,141 @@
+#include<stdio.h>
+#include<malloc.h>
+#include<ctype.h>
+#include<string.h>
+
+struct stack{
+    char stk[20];
+    int top;
+};
+
+void creat(struct stack *s){
+    s->top = -1;
+}
+
+void push(struct stack *s, char a){
+    s->top++;
+    s->stk[s->top] = a;
+}
+
+void pop(struct stack *s){
+    s->top--;
+}
+
+int opt(char a){
+    if(a == '+' || a == '-' || a == '*' || a == '/'){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+int precedence(char a,char b){
+    if((a == '+' || a == '-') && (b == '*' || b == '/')){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+char* postfix(char exp[20]){
+    int i=0,k=0,l;
+    char* p;
+    struct stack *s;
+    s = (struct stack *)malloc(sizeof(struct stack));
+    creat(s);
+    l = strlen(exp);
+    p = (char *)malloc(l*sizeof(char));
+    creat(s);
+    while(exp[i] != '\0'){
+        if(isdigit(exp[i])){
+            p[k] = exp[i];
+            k++;
+        }else if(opt(exp[i])){
+            if(s->top == -1){
+                push(s,exp[i]);
+            }else if(precedence(s->stk[s->top],exp[i])){
+                push(s,exp[i]);
+            }else{
+                p[k] = s->stk[s->top];
+                k++;
+                pop(s);
+                if(s->top > -1){
+                    p[k] = s->stk[s->top];
+                    k++;
+                    pop(s);
+                }
+                push(s,exp[i]);
+            }
+        }else{
+            printf("\nINVALID INPUT!!!\n");
+        }
+        i++;
+    }
+    while(s->top > -1){
+        p[k] = s->stk[s->top];
+        k++;
+        pop(s);
+    }
+    return p;
+}
+
+char* prefix(char exp[20]){
+    int i,l;
+    char* p;
+    struct stack *r;
+    r = (struct stack *)malloc(sizeof(struct stack));
+    creat(r);
+    struct stack *s;
+    s = (struct stack *)malloc(sizeof(struct stack));
+    creat(s);
+    l = strlen(exp);
+    p = (char *)malloc(l*sizeof(char));
+    i = l-1;
+    creat(s);
+    while(i >= 0){
+        if(isdigit(exp[i])){
+            r->top++;
+            r->stk[r->top] = exp[i];
+        }else if(opt(exp[i])){
+            if(s->top == -1){
+                push(s,exp[i]);
+            }else if(precedence(s->stk[s->top],exp[i])){
+                push(s,exp[i]);
+            }else{
+                r->top++;
+                r->stk[r->top] = s->stk[s->top];
+                pop(s);
+                if(s->top > -1){
+                    r->top++;
+                    r->stk[r->top] = s->stk[s->top];
+                    pop(s);
+                }
+                push(s,exp[i]);
+            }
+        }else{
+            printf("\nINVALID INPUT!!!\n");
+        }
+        i--;
+    }
+    while(s->top > -1){
+        r->top++;
+        r->stk[r->top] = s->stk[s->top];
+        pop(s);
+    }
+    i=0;
+    while(r->top > -1){
+        p[i++]=r->stk[r->top];
+        pop(r);
+    }
+    return p;
+}
+
+int main(){
+
+    char exp[20];
+    printf("Enter the expression - ");
+    scanf("%s",exp);
+    printf("%s",postfix(exp));
+    printf("\n%s",prefix(exp));
+    return 0;
+}
